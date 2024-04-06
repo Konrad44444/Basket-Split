@@ -32,6 +32,10 @@ public class Basket {
 
         try {
 
+            if (jsonTxt.equals("")) {
+                return;
+            }
+
             // read data form file as an array
             JSONArray basketItems = new JSONArray(jsonTxt);
 
