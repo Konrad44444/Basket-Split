@@ -20,7 +20,7 @@ import com.ocado.exceptions.InvalidJsonFileException;
 
 public class BasketSplitter {
 
-    Map<String, List<String>> deliveryTypesAndProducts = new HashMap<>();
+    private Map<String, List<String>> deliveryTypesAndProducts = new HashMap<>();
 
     public BasketSplitter(String absolutePathToConfigFile) {
         String jsonTxt = "";
@@ -143,5 +143,9 @@ public class BasketSplitter {
         }
 
         return result.toString();
+    }
+
+    public Map<String, List<String>> getDeliveryTypesAndProducts() {
+        return this.deliveryTypesAndProducts;
     }
 }
