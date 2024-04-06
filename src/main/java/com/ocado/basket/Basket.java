@@ -11,6 +11,9 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.ocado.exceptions.IncorrectPathException;
+import com.ocado.exceptions.InvalidJsonFileException;
+
 public class Basket {
     List<String> items = new ArrayList<>();
 
@@ -24,7 +27,7 @@ public class Basket {
             jsonTxt = IOUtils.toString(is, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
-            throw new RuntimeException("Cannot find file - check path", e);
+            throw new IncorrectPathException("Cannot find file - check path", e);
         }
 
         try {
@@ -38,7 +41,7 @@ public class Basket {
             }
 
         } catch (JSONException e) {
-            throw new RuntimeException("File is not a valid JSON file", e);
+            throw new InvalidJsonFileException("File is not a valid JSON file", e);
         }
     }
 

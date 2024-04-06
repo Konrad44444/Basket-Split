@@ -15,6 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ocado.exceptions.IncorrectPathException;
+import com.ocado.exceptions.InvalidJsonFileException;
+
 public class BasketSplitter {
 
     Map<String, List<String>> deliveryTypesAndProducts = new HashMap<>();
@@ -29,7 +32,7 @@ public class BasketSplitter {
             jsonTxt = IOUtils.toString(is, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
-            throw new RuntimeException("Cannot find file - check path", e);
+            throw new IncorrectPathException("Cannot find file - check path", e);
         }
 
         // create JSON object, iterate through it and add every product to each delivery
@@ -58,17 +61,21 @@ public class BasketSplitter {
             }
 
         } catch (JSONException e) {
-            throw new RuntimeException("File is not a valid JSON file", e);
+            throw new InvalidJsonFileException("File is not a valid JSON file", e);
         }
     }
 
     public Map<String, List<String>> split(List<String> items) {
         Map<String, List<String>> result = new HashMap<>();
 
+        if (items.size() > 100) {
+            return result;
+        }
+
         while (!items.isEmpty()) {
 
             // stage 0: if there is only one item in basket, return first delivery type
-            // available
+            // found
             if (items.size() == 1) {
                 for (String deliveryType : deliveryTypesAndProducts.keySet()) {
 
@@ -113,11 +120,9 @@ public class BasketSplitter {
 
             // stage 3: add delivery and items to result
             result.put(maxDeliveryType, deliveryCount.get(maxDeliveryType));
-            System.out.println(maxItems + " - " + maxDeliveryType + ": " + deliveryCount.get(maxDeliveryType));
 
             // stage 4: remove items from list
             items.removeAll(deliveryCount.get(maxDeliveryType));
-            System.out.println(items);
 
         }
 
