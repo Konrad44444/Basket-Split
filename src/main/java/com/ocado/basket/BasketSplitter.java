@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,65 @@ public class BasketSplitter {
     }
 
     public Map<String, List<String>> split(List<String> items) {
-        return Collections.emptyMap();
+        Map<String, List<String>> result = new HashMap<>();
+
+        while (!items.isEmpty()) {
+
+            // stage 0: if there is only one item in basket, return first delivery type
+            // available
+            if (items.size() == 1) {
+                for (String deliveryType : deliveryTypesAndProducts.keySet()) {
+
+                    if (deliveryTypesAndProducts.get(deliveryType).contains(items.get(0))) {
+                        result.put(deliveryType, List.of(items.get(0)));
+                        break;
+                    }
+
+                }
+                break;
+            }
+
+            // stage 1: count how many products can every delivery type deliver
+            Map<String, List<String>> deliveryCount = new HashMap<>();
+
+            for (String deliveryType : deliveryTypesAndProducts.keySet()) {
+                deliveryCount.put(deliveryType, new ArrayList<>());
+
+                for (String item : items) {
+
+                    // if this delivery type can deliver this item increase count
+                    if (deliveryTypesAndProducts.get(deliveryType).contains(item)) {
+                        List<String> i = deliveryCount.get(deliveryType);
+                        i.add(item);
+                        deliveryCount.replace(deliveryType, i);
+                    }
+                }
+            }
+
+            // stage 2: find delivery type with the highest amount of items
+            int maxItems = 0;
+            String maxDeliveryType = "";
+
+            for (String deliveryType : deliveryCount.keySet()) {
+                int size = deliveryCount.get(deliveryType).size();
+
+                if (size > maxItems) {
+                    maxItems = size;
+                    maxDeliveryType = deliveryType;
+                }
+            }
+
+            // stage 3: add delivery and items to result
+            result.put(maxDeliveryType, deliveryCount.get(maxDeliveryType));
+            System.out.println(maxItems + " - " + maxDeliveryType + ": " + deliveryCount.get(maxDeliveryType));
+
+            // stage 4: remove items from list
+            items.removeAll(deliveryCount.get(maxDeliveryType));
+            System.out.println(items);
+
+        }
+
+        return result;
     }
 
     public String toString() {
