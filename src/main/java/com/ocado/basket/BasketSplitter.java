@@ -67,8 +67,12 @@ public class BasketSplitter {
     public Map<String, List<String>> split(List<String> items) {
         Map<String, List<String>> result = new HashMap<>();
 
-        if (items.size() > 100) {
+        if (items == null) {
             return result;
+        }
+
+        if (items.size() > 100) {
+            throw new IllegalArgumentException("Too many items in the basket! Maximum basket size is 100.");
         }
 
         while (!items.isEmpty()) {
@@ -112,7 +116,9 @@ public class BasketSplitter {
 
                     // change of the max amount of items - clear list
                     equalsAmounts.clear();
-                } else if (size == maxItems) {
+                }
+
+                if (size == maxItems) {
                     // if there are delivery types with equal amounts of items -> needs to be
                     // computed which gives the best solution
                     equalsAmounts.add(deliveryType);
@@ -121,7 +127,7 @@ public class BasketSplitter {
 
             // stage 2.1: if there are more than one delivery type with the highes amount of
             // items compute the best solution
-            if (!equalsAmounts.isEmpty()) {
+            if (equalsAmounts.size() > 1) {
                 Map<String, Map<String, List<String>>> possibleResults = new HashMap<>();
 
                 // for each delivery type compute the possible final result
