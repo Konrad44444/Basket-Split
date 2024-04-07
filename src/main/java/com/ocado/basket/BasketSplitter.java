@@ -101,13 +101,54 @@ public class BasketSplitter {
             int maxItems = 0;
             String maxDeliveryType = "";
 
+            List<String> equalsAmounts = new ArrayList<>();
+
             for (String deliveryType : deliveryCount.keySet()) {
                 int size = deliveryCount.get(deliveryType).size();
 
                 if (size > maxItems) {
                     maxItems = size;
                     maxDeliveryType = deliveryType;
+
+                    // change of the max amount of items - clear list
+                    equalsAmounts.clear();
+                } else if (size == maxItems) {
+                    // if there are delivery types with equal amounts of items -> needs to be
+                    // computed which gives the best solution
+                    equalsAmounts.add(deliveryType);
                 }
+            }
+
+            // stage 2.1: if there are more than one delivery type with the highes amount of
+            // items compute the best solution
+            if (!equalsAmounts.isEmpty()) {
+                Map<String, Map<String, List<String>>> possibleResults = new HashMap<>();
+
+                // for each delivery type compute the possible final result
+                for (String deliveryType : equalsAmounts) {
+                    List<String> copyItems = new ArrayList<>(items);
+                    copyItems.removeAll(deliveryCount.get(deliveryType));
+
+                    possibleResults.put(deliveryType, this.split(copyItems));
+                }
+
+                // for each possible result find the one with the smallest amount of delivery
+                // groups
+                int min = Integer.MAX_VALUE;
+                String minDeliveryType = "";
+
+                for (String deliveryType : possibleResults.keySet()) {
+                    int deliveryGroups = possibleResults.get(deliveryType).keySet().size();
+
+                    if (deliveryGroups < min) {
+                        min = deliveryGroups;
+                        minDeliveryType = deliveryType;
+                    }
+                }
+
+                // return the best option found
+                possibleResults.get(minDeliveryType).put(minDeliveryType, deliveryCount.get(minDeliveryType));
+                return possibleResults.get(minDeliveryType);
             }
 
             // stage 3: add delivery and items to result
