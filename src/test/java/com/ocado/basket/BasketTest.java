@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.ocado.exceptions.IncorrectPathException;
-import com.ocado.exceptions.InvalidJsonFileException;
+import com.ocado.basket.exceptions.IncorrectPathException;
+import com.ocado.basket.exceptions.InvalidJsonFileException;
 
 class BasketTest {
 

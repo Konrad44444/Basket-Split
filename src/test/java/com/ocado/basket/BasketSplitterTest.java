@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.ocado.exceptions.IncorrectPathException;
-import com.ocado.exceptions.InvalidJsonFileException;
+import com.ocado.basket.exceptions.IncorrectPathException;
+import com.ocado.basket.exceptions.InvalidJsonFileException;
 
 class BasketSplitterTest {
 

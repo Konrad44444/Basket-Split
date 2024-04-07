@@ -15,8 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ocado.exceptions.IncorrectPathException;
-import com.ocado.exceptions.InvalidJsonFileException;
+import com.ocado.basket.exceptions.IncorrectPathException;
+import com.ocado.basket.exceptions.InvalidJsonFileException;
 
 public class BasketSplitter {
 

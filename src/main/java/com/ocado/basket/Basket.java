@@ -11,8 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.ocado.exceptions.IncorrectPathException;
-import com.ocado.exceptions.InvalidJsonFileException;
+import com.ocado.basket.exceptions.IncorrectPathException;
+import com.ocado.basket.exceptions.InvalidJsonFileException;
 
 public class Basket {
     List<String> items = new ArrayList<>();
