@@ -20,7 +20,7 @@ import com.ocado.basket.exceptions.InvalidJsonFileException;
 
 public class BasketSplitter {
 
-    private Map<String, List<String>> deliveryTypesAndProducts = new HashMap<>();
+    private Map<String, List<String>> productsAndDeliveryTypes = new HashMap<>();
 
     public BasketSplitter(String absolutePathToConfigFile) {
         String jsonTxt = "";
@@ -35,8 +35,8 @@ public class BasketSplitter {
             throw new IncorrectPathException("Cannot find file - check path", e);
         }
 
-        // create JSON object, iterate through it and add every product to each delivery
-        // way
+        // create JSON object, iterate through it and add every delivery way to each
+        // product
         try {
 
             JSONObject config = new JSONObject(jsonTxt);
@@ -48,13 +48,13 @@ public class BasketSplitter {
                 JSONArray deliveryTypes = config.getJSONArray(product);
 
                 // add product to map
-                deliveryTypesAndProducts.put(product, new ArrayList<>());
+                productsAndDeliveryTypes.put(product, new ArrayList<>());
 
                 // for each product add a delivery type
                 for (Object deliveryType : deliveryTypes) {
 
                     String dType = (String) deliveryType;
-                    deliveryTypesAndProducts.get(product).add(dType);
+                    productsAndDeliveryTypes.get(product).add(dType);
 
                 }
             }
@@ -77,12 +77,12 @@ public class BasketSplitter {
 
         while (!items.isEmpty()) {
 
-            // stage 0: if there is only one item in basket, return first delivery type
-            // available
+            // stage 0: if there is only one item in basket, put into result first delivery
+            // type available
             if (items.size() == 1) {
 
                 String item = items.get(0);
-                result.put(deliveryTypesAndProducts.get(item).get(0), List.of(item));
+                result.put(productsAndDeliveryTypes.get(item).get(0), List.of(item));
 
                 break;
             }
@@ -93,7 +93,7 @@ public class BasketSplitter {
 
             for (String item : items) {
                 // for each item get its deliveries
-                List<String> deliveryTypes = deliveryTypesAndProducts.get(item);
+                List<String> deliveryTypes = productsAndDeliveryTypes.get(item);
 
                 // for each delivery in map add this item to list
                 for (String deliveryType : deliveryTypes) {
@@ -171,10 +171,10 @@ public class BasketSplitter {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (String product : deliveryTypesAndProducts.keySet()) {
+        for (String product : productsAndDeliveryTypes.keySet()) {
             result.append("Product: " + product + "\n");
 
-            for (String deliveryType : deliveryTypesAndProducts.get(product)) {
+            for (String deliveryType : productsAndDeliveryTypes.get(product)) {
                 result.append(deliveryType + ", ");
             }
 
@@ -184,7 +184,7 @@ public class BasketSplitter {
         return result.toString();
     }
 
-    public Map<String, List<String>> getDeliveryTypesAndProducts() {
-        return this.deliveryTypesAndProducts;
+    public Map<String, List<String>> getProductsAndDeliveryTypes() {
+        return this.productsAndDeliveryTypes;
     }
 }

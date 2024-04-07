@@ -28,7 +28,7 @@ class BasketSplitterTest {
 
     @Test
     void givenCorrectConfigFile_expectDataInHashMap() {
-        assertFalse(basketSplitter.getDeliveryTypesAndProducts().isEmpty());
+        assertFalse(basketSplitter.getProductsAndDeliveryTypes().isEmpty());
     }
 
     @Test
@@ -45,8 +45,6 @@ class BasketSplitterTest {
 
         assertThrows(InvalidJsonFileException.class, () -> new BasketSplitter(path));
     }
-
-    // TODO: test basket 1 and basket 2
 
     @Test
     void givenEmptyList_expectEmptyMap() {
