@@ -41,22 +41,21 @@ public class BasketSplitter {
 
             JSONObject config = new JSONObject(jsonTxt);
 
-            Set<String> keys = config.keySet();
+            Set<String> products = config.keySet();
 
-            for (String key : keys) {
-                // key is a prduct, which has one or many delivery types
-                JSONArray deliveryTypes = config.getJSONArray(key);
+            for (String product : products) {
+                // product has one or many delivery types
+                JSONArray deliveryTypes = config.getJSONArray(product);
 
-                // for each delivery type add an product
+                // add product to map
+                deliveryTypesAndProducts.put(product, new ArrayList<>());
+
+                // for each product add a delivery type
                 for (Object deliveryType : deliveryTypes) {
 
                     String dType = (String) deliveryType;
+                    deliveryTypesAndProducts.get(product).add(dType);
 
-                    if (deliveryTypesAndProducts.containsKey(dType)) {
-                        deliveryTypesAndProducts.get(dType).add(key);
-                    } else {
-                        deliveryTypesAndProducts.put(dType, new ArrayList<>(List.of(key)));
-                    }
                 }
             }
 
@@ -75,33 +74,26 @@ public class BasketSplitter {
         while (!items.isEmpty()) {
 
             // stage 0: if there is only one item in basket, return first delivery type
-            // found
+            // available
             if (items.size() == 1) {
-                for (String deliveryType : deliveryTypesAndProducts.keySet()) {
 
-                    if (deliveryTypesAndProducts.get(deliveryType).contains(items.get(0))) {
-                        result.put(deliveryType, List.of(items.get(0)));
-                        break;
-                    }
+                String item = items.get(0);
+                result.put(deliveryTypesAndProducts.get(item).get(0), List.of(item));
 
-                }
                 break;
             }
 
-            // stage 1: count how many products can every delivery type deliver
+            // stage 1: count how many products can every delivery type deliver by adding
+            // them to the list
             Map<String, List<String>> deliveryCount = new HashMap<>();
 
-            for (String deliveryType : deliveryTypesAndProducts.keySet()) {
-                deliveryCount.put(deliveryType, new ArrayList<>());
+            for (String item : items) {
+                // for each item get its deliveries
+                List<String> deliveryTypes = deliveryTypesAndProducts.get(item);
 
-                for (String item : items) {
-
-                    // if this delivery type can deliver this item increase count
-                    if (deliveryTypesAndProducts.get(deliveryType).contains(item)) {
-                        List<String> i = deliveryCount.get(deliveryType);
-                        i.add(item);
-                        deliveryCount.replace(deliveryType, i);
-                    }
+                // for each delivery in map add this item to list
+                for (String deliveryType : deliveryTypes) {
+                    deliveryCount.computeIfAbsent(deliveryType, k -> new ArrayList<>()).add(item);
                 }
             }
 
@@ -132,11 +124,11 @@ public class BasketSplitter {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (String key : deliveryTypesAndProducts.keySet()) {
-            result.append("Delivery type: " + key + "\n");
+        for (String product : deliveryTypesAndProducts.keySet()) {
+            result.append("Product: " + product + "\n");
 
-            for (String product : deliveryTypesAndProducts.get(key)) {
-                result.append(product + ", ");
+            for (String deliveryType : deliveryTypesAndProducts.get(product)) {
+                result.append(deliveryType + ", ");
             }
 
             result.append("\n\n-----\n");
